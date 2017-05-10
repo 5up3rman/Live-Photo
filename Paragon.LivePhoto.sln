@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{BB8A9B43-5B95-4218-9E40-77A66730B6F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{43676DA7-176A-44EC-B601-FA48E28C1BBC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{ADD24751-C5C4-4BA7-96B9-B7126340F581}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Foundation", "Foundation", "{667CB562-8C73-4B40-8FB4-0631CF49FF2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paragon.Common.LivePhoto", "src\Project\Common\code\Paragon.Common.LivePhoto.csproj", "{727D0672-2024-42AD-84B3-A9CE00315D3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paragon.Foundation.LivePhoto", "src\Foundation\LivePhoto\code\Paragon.Foundation.LivePhoto.csproj", "{C38669AA-B42F-480A-AC1C-24B5633A4EDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paragon.Foundation.Models", "src\Foundation\Models\Paragon.Foundation.Models\Paragon.Foundation.Models.csproj", "{377249C5-9A57-4147-BC62-75BADDA1364A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paragon.Demo.LivePhoto", "src\Project\Demo\Paragon.Demo.LivePhoto\Paragon.Demo.LivePhoto.csproj", "{F346D9DB-CE35-4272-8F6B-20D6AD3F97EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{727D0672-2024-42AD-84B3-A9CE00315D3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{727D0672-2024-42AD-84B3-A9CE00315D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{727D0672-2024-42AD-84B3-A9CE00315D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{727D0672-2024-42AD-84B3-A9CE00315D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C38669AA-B42F-480A-AC1C-24B5633A4EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C38669AA-B42F-480A-AC1C-24B5633A4EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C38669AA-B42F-480A-AC1C-24B5633A4EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C38669AA-B42F-480A-AC1C-24B5633A4EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{377249C5-9A57-4147-BC62-75BADDA1364A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{377249C5-9A57-4147-BC62-75BADDA1364A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{377249C5-9A57-4147-BC62-75BADDA1364A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{377249C5-9A57-4147-BC62-75BADDA1364A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F346D9DB-CE35-4272-8F6B-20D6AD3F97EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F346D9DB-CE35-4272-8F6B-20D6AD3F97EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F346D9DB-CE35-4272-8F6B-20D6AD3F97EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F346D9DB-CE35-4272-8F6B-20D6AD3F97EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{43676DA7-176A-44EC-B601-FA48E28C1BBC} = {BB8A9B43-5B95-4218-9E40-77A66730B6F8}
+		{ADD24751-C5C4-4BA7-96B9-B7126340F581} = {BB8A9B43-5B95-4218-9E40-77A66730B6F8}
+		{727D0672-2024-42AD-84B3-A9CE00315D3F} = {ADD24751-C5C4-4BA7-96B9-B7126340F581}
+		{C38669AA-B42F-480A-AC1C-24B5633A4EDA} = {667CB562-8C73-4B40-8FB4-0631CF49FF2E}
+		{377249C5-9A57-4147-BC62-75BADDA1364A} = {667CB562-8C73-4B40-8FB4-0631CF49FF2E}
+		{F346D9DB-CE35-4272-8F6B-20D6AD3F97EA} = {43676DA7-176A-44EC-B601-FA48E28C1BBC}
+	EndGlobalSection
+EndGlobal
