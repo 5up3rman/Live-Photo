@@ -26,3 +26,8 @@ temp/
 *.ncrunchsolution
 .vscode
 nCrunchTemp*.*
+gulpfile.js
+gulp-config.js
+package.json
+publishsettings.targets
+src/Foundation/LivePhoto/code/Properties/PublishProfiles/Eric.pubxml
