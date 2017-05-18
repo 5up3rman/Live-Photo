@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using Glass.Mapper.Sc.Web.Mvc;
-using Paragon.Foundation.LivePhoto.Models;
 using Paragon.Demo.LivePhoto.Areas.LivePhoto.ViewModels;
 using Paragon.Foundation.Models;
 

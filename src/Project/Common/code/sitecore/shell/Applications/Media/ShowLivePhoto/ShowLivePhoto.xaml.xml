@@ -20,11 +20,15 @@
         <asp:Literal ID="LivePhotoContainer" runat="server" />
       </Border>
       <Border runat="server" GridPanel.VAlign="top">
-        <asp:CheckBox ID="ShowPhotoTime" runat="server" Text="Display the Photo's Timestamp."/>
-        <br/>
-        <asp:CheckBox ID="ProactivelyLoadVideo" runat="server" Text="Proactively Load Video"/>
-        <br/>
-        <asp:CheckBox ID="ShowPlaybackControls" runat="server" Text="Show Playback Controls" />
+        <div>
+          <asp:CheckBox ID="ProactivelyLoadVideo" runat="server" Checked="true" Text="Proactively Load Video"/>
+        </div>
+        <div>
+          <asp:CheckBox ID="ShowPlaybackControls" runat="server" Checked="true" Text="Show Playback Controls" />
+        </div>
+        <div>
+        <asp:CheckBox ID="ShowPhotoTime" runat="server" Visible="false" Checked="true" Text="Display the Photo's Timestamp."/>
+        </div>
       </Border>
     </Sitecore.Controls.DialogPage>
   </Sitecore.Shell.Applications.Media.ShowLivePhoto>

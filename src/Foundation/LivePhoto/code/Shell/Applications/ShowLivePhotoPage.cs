@@ -5,6 +5,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Controls;
 using Sitecore.Data;
+using Sitecore.Mvc.Extensions;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Web;
@@ -21,7 +22,7 @@ namespace Paragon.Foundation.LivePhoto.Shell.Applications.Media.LivePhoto
 
         public const int maxHeight = 440;
         public const int maxWidth = 460;
-        
+
         private XmlValue XmlValue
         {
             get { return new XmlValue(StringUtil.GetString(ViewState["XmlValue"]), "image"); }
@@ -47,22 +48,25 @@ namespace Paragon.Foundation.LivePhoto.Shell.Applications.Media.LivePhoto
 
             var height = MediaItemExtensions.GetImageRatioHeight(db, img.ID);
             var width = MediaItemExtensions.GetImageRatioWidth(db, img.ID);
-           
-            LivePhotoContainer.Text = $"<span data-live-photo data-photo-src=\"{MediaManager.GetMediaUrl(img)}\" data-video-src=\"{MediaManager.GetMediaUrl(mov)}\" data-proactively-loads-video=\"true\" data-shows-native-controls=\"true\" style=\"width:{width}px; height:{height}px;\"></span>";
+
+            var showDataPhotoTime = XmlValue.GetAttribute("data-photo-time").ToBool();
+            ShowPhotoTime.Checked = showDataPhotoTime;
+
+            var proactivelyLoadVideo = XmlValue.GetAttribute("data-proactively-loads-video").ToBool();
+            ProactivelyLoadVideo.Checked = proactivelyLoadVideo;
+
+            var showPlaybackControls = XmlValue.GetAttribute("data-shows-native-controls").ToBool();
+            ShowPlaybackControls.Checked = showPlaybackControls;
+
+            LivePhotoContainer.Text = $"<span data-live-photo data-photo-src=\"{MediaManager.GetMediaUrl(img)}\" data-video-src=\"{MediaManager.GetMediaUrl(mov)}\" data-proactively-loads-video=\"{proactivelyLoadVideo.ToString().ToLower()}\" data-photo-time=\"{showDataPhotoTime.ToString().ToLower()}\" data-shows-native-controls=\"{showPlaybackControls.ToString().ToLower()}\" style=\"width:{width}px; height:{height}px;\"></span>";
         }
 
         protected override void OK_Click()
         {
             var xml = XmlValue;
-
-            if (ShowPhotoTime.Checked)
-                xml.SetAttribute("data-photo-time", "true");
-
-            if (ProactivelyLoadVideo.Checked)
-                xml.SetAttribute("data-proactively-loads-video", "true");
-
-            if (ShowPlaybackControls.Checked)
-                xml.SetAttribute("data-shows-native-controls", "true");
+            xml.SetAttribute("data-photo-time", ShowPhotoTime.Checked.ToString().ToLower());
+            xml.SetAttribute("data-proactively-loads-video", ProactivelyLoadVideo.Checked.ToString().ToLower());
+            xml.SetAttribute("data-shows-native-controls", ShowPlaybackControls.Checked.ToString().ToLower());
 
             SheerResponse.SetDialogValue(xml.ToString());
             base.OK_Click();

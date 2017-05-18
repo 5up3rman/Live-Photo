@@ -1,5 +1,5 @@
 ﻿using Glass.Mapper.Sc.Configuration.Attributes;
-using Paragon.Foundation.LivePhoto.Models;
+using Paragon.Foundation.LivePhoto.GlassFieldObjects;
 
 namespace Paragon.Foundation.Models
 {
@@ -7,6 +7,6 @@ namespace Paragon.Foundation.Models
     public interface ILivePhotoDemo: IPageBase
     {
         [SitecoreField(FieldId = "{5C4B16DC-0FC4-4211-AAEA-6BB399E67601}")]
-        LivePhotoObject Photo { get; set; }
+        LivePhotoGlassObject Photo { get; set; }
     }
 }

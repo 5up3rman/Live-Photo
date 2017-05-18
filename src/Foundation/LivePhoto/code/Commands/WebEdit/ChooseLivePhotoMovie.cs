@@ -1,5 +1,5 @@
 ﻿using System;
-using Paragon.Foundation.LivePhoto.Fields;
+using Paragon.Foundation.LivePhoto.Data.Fields;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
@@ -31,7 +31,7 @@ namespace Paragon.Foundation.LivePhoto.Commands.WebEdit
             itemNotNull.Fields.ReadAll();
 
             var innerField = itemNotNull.Fields[args.Parameters["fieldid"]];
-            var livePhotoField = new LivePhotoField(innerField, innerField.Value);
+            var livePhotoDataObj = new LivePhotoField(innerField, innerField.Value);
             var controlId = args.Parameters["controlid"];
             var fieldVal = args.Parameters["fieldValue"];
 
@@ -49,9 +49,9 @@ namespace Paragon.Foundation.LivePhoto.Commands.WebEdit
                     if (movieItem == null || !movieItem.Extension.Contains("mov"))
                         throw new ClientAlertException("Please select an Item that's a .mov type.");
 
-                    livePhotoField.SetAttribute("movieid", movieItem.ID.ToString());
+                    livePhotoDataObj.SetAttribute("movieid", movieItem.ID.ToString());
 
-                    itmVal = livePhotoField.Value;
+                    itmVal = livePhotoDataObj.Value;
                 }
                 else
                     itmVal = string.Empty;

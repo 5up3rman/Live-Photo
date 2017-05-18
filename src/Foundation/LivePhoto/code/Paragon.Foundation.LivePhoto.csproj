@@ -98,20 +98,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\WebEdit\ChooseLivePhotoMovie.cs" />
-    <Compile Include="ContentEditor\LivePhoto.cs" />
+    <Compile Include="Commands\WebEdit\SetLivePhotoProperties.cs" />
+    <Compile Include="ContentEditor\Fields\LivePhotoFieldControl.cs" />
     <Compile Include="DataMappers\LivePhotoDataMapper.cs" />
-    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\MediaItemExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
-    <Compile Include="Fields\LivePhotoField.cs" />
+    <Compile Include="Data\Fields\LivePhotoField.cs" />
     <Compile Include="HtmlHelpers\RenderElement.cs" />
-    <Compile Include="Models\ILivePhotoObject.cs" />
-    <Compile Include="Models\LivePhotoObject.cs" />
+    <Compile Include="GlassFieldObjects\ILivePhotoGlassObject.cs" />
+    <Compile Include="GlassFieldObjects\LivePhotoGlassObject.cs" />
     <Compile Include="Mvc\LivePhotoMvc.cs" />
     <Compile Include="Pipelines\RenderField\GetLivePhotoValue.cs" />
     <Compile Include="Pipelines\RenderField\LivePhotoRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Commands\WebEdit\SetImageProperties.cs" />
     <Compile Include="Shell\Applications\ShowLivePhotoPage.cs" />
   </ItemGroup>
   <ItemGroup>

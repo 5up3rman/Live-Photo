@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Web;
@@ -11,8 +12,8 @@ using Glass.Mapper.Sc;
 using Glass.Mapper.Sc.Configuration;
 using Glass.Mapper.Sc.Web.Mvc;
 using Paragon.Foundation.LivePhoto.Extensions;
+using Paragon.Foundation.LivePhoto.GlassFieldObjects;
 using Paragon.Foundation.LivePhoto.HtmlHelpers;
-using Paragon.Foundation.LivePhoto.Models;
 using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -37,24 +38,23 @@ namespace Paragon.Foundation.LivePhoto.Mvc
             Model = model;
         }
 
-        public HtmlString RenderLivePhoto<T>(T model, Expression<Func<T, object>> field, 
+        public HtmlString RenderLivePhoto<T>(T model, Expression<Func<T, object>> field,
             bool isEditable = false, HtmlTextWriterTag tag = HtmlTextWriterTag.Span)
         {
-            var fld = field.Compile().Invoke(model) as LivePhotoObject;
+            var fld = field.Compile().Invoke(model) as LivePhotoGlassObject;
 
-            if (fld == null)
-                return new HtmlString("Field is not Set");
+            if (Glass.Mapper.Sc.GlassHtml.IsInEditingMode && isEditable)
+            {
+                var attr = GetLivePhotoCommonAttributes(fld, tag);
+                var urlString = new UrlString();
 
-            var attr = GetLivePhotoCommonAttributes(fld, tag);
-            var urlString = new UrlString();
+                foreach (var keyValuePair in attr)
+                    urlString.Parameters.Add(keyValuePair.Key, keyValuePair.Value);
 
-            foreach (var keyValuePair in attr)
-                urlString.Parameters.Add(keyValuePair.Key, keyValuePair.Value);
+                return new HtmlString(MakeEditable(field, model, urlString.Parameters, LivePhotoAPIDataAttributes(fld), SitecoreContext.GlassContext));
+            }
 
-            if (!Glass.Mapper.Sc.GlassHtml.IsInEditingMode || !IsInEditingMode)
-                return RenderLivePhoto(fld, tag);
-
-            return new HtmlString(MakeEditable(field, model, urlString.Parameters, LivePhotoAPIDataAttributes(fld), SitecoreContext.GlassContext));
+            return RenderLivePhoto(fld, tag);
         }
 
         /// <summary>
@@ -63,9 +63,9 @@ namespace Paragon.Foundation.LivePhoto.Mvc
         /// <param name="fld"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        private HtmlString RenderLivePhoto(ILivePhotoObject fld, HtmlTextWriterTag tag = HtmlTextWriterTag.Span)
+        private HtmlString RenderLivePhoto(ILivePhotoGlassObject fld, HtmlTextWriterTag tag = HtmlTextWriterTag.Span)
         {
-            var firstPart = $"<{tag.ToString().ToLower()} {string.Join(" ", LivePhotoAPIDataAttributes(fld))} {PropertyExtensions.ConvertAttributes(GetLivePhotoCommonAttributes(fld, tag), "")} style=\"height:{fld.Height}px; width:{fld.Width}px;\">";
+            var firstPart = $"<{tag.ToString().ToLower()} {string.Join(" ", LivePhotoAPIDataAttributes(fld))} {PropertyExtensions.ConvertAttributes(GetLivePhotoCommonAttributes(fld, tag), "")} style={fld?.InlineStyle ?? $"\"\""}>";
             var lastPart = $"</{tag.ToString().ToLower()}>";
 
             return new HtmlString(firstPart + lastPart);
@@ -105,6 +105,9 @@ namespace Paragon.Foundation.LivePhoto.Mvc
                 if (model == null)
                     throw new NullReferenceException("No model set");
 
+                if (field == null)
+                    throw new NullReferenceException("No field set");
+
                 if (parameters is string)
                     attributes = WebUtil.ParseQueryString(parameters as string);
                 else if (parameters is NameValueCollection)
@@ -128,7 +131,7 @@ namespace Paragon.Foundation.LivePhoto.Mvc
                 var typeConfiguration = Utilities.GetTypeConfig<T, SitecoreTypeConfiguration>(field, context, model);
                 var glassProperty = Utilities.GetGlassProperty<T, SitecoreTypeConfiguration>(field, context, model);
                 var item = typeConfiguration.ResolveItem(targetObjectOfLamba, SitecoreContext.Database);
-
+                
                 using (new ContextItemSwitcher(item))
                 {
                     var fieldConfiguration = (SitecoreFieldConfiguration) glassProperty;
@@ -150,7 +153,7 @@ namespace Paragon.Foundation.LivePhoto.Mvc
             }
             catch (Exception ex)
             {
-                firstPart = string.Format("<p>{0}</p><pre>{1}</pre>", new object[] {ex.Message, ex.StackTrace});
+                firstPart = string.Format($"<p>{ex.Message}</p><pre>{ex.StackTrace}</pre>");
                 Sitecore.Diagnostics.Log.Error("Failed to render field", ex, typeof (IGlassHtml));
             }
 
@@ -163,7 +166,7 @@ namespace Paragon.Foundation.LivePhoto.Mvc
         /// <param name="fld"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        private SafeDictionary<string> GetLivePhotoCommonAttributes(ILivePhotoObject fld, HtmlTextWriterTag tag = HtmlTextWriterTag.Span)
+        private SafeDictionary<string> GetLivePhotoCommonAttributes(ILivePhotoGlassObject fld, HtmlTextWriterTag tag = HtmlTextWriterTag.Span)
         {
             var collection = new SafeDictionary<string>();
 
@@ -180,13 +183,19 @@ namespace Paragon.Foundation.LivePhoto.Mvc
             return collection;
         }
 
-        private IEnumerable<string> LivePhotoAPIDataAttributes(ILivePhotoObject fld)
+        private IEnumerable<string> LivePhotoAPIDataAttributes(ILivePhotoGlassObject fld)
         {
+            if (fld == null)
+                return Enumerable.Empty<string>();
+
             // Add the API Options. They need to added to the tag without a following ="", the API takes care of that.
             var dataAttrList = new List<string> { "data-live-photo" };
 
             if (!string.IsNullOrEmpty(fld.DataPhotoTime))
                 dataAttrList.Add("data-photo-time");
+
+            if (!string.IsNullOrEmpty(fld.DataProactivelyLoadsVideo))
+                dataAttrList.Add("data-proactively-loads-video");
 
             if (!string.IsNullOrEmpty(fld.DataShowsNativeControls))
                 dataAttrList.Add("data-show-native-controls");
@@ -199,14 +208,14 @@ namespace Paragon.Foundation.LivePhoto.Mvc
         /// </summary>
         /// <param name="fld"></param>
         /// <returns></returns>
-        private string GetProtectedPhotoSource(ILivePhotoObject fld)
+        private string GetProtectedPhotoSource(ILivePhotoGlassObject fld)
         {
             var collection = new SafeDictionary<string>();
 
-            if (!collection.ContainsKey("h"))
+            if (!collection.ContainsKey("h") && fld.Height != 0)
                 collection.Add("h", fld.Height.ToString());
 
-            if (!collection.ContainsKey("w"))
+            if (!collection.ContainsKey("w") && fld.Width != 0)
                 collection.Add("w", fld.Width.ToString());
 
             var urlBuilder = new Glass.Mapper.UrlBuilder(fld.DataPhotoSrc);

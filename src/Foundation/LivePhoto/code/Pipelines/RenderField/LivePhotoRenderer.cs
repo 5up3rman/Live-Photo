@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Glass.Mapper;
-using Paragon.Foundation.LivePhoto.Fields;
+using Paragon.Foundation.LivePhoto.Data.Fields;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
@@ -16,9 +16,10 @@ using Context = Sitecore.Context;
 
 namespace Paragon.Foundation.LivePhoto.Pipelines.RenderField
 {
+    // Based on the 
     public class LivePhotoRenderer : FieldRendererBase
     {
-        private LivePhotoField livePhotoField { get; set; }
+        private LivePhotoField livePhotoDataField { get; set; }
         private Database database;
         private Language language;
         private Version version;
@@ -26,6 +27,7 @@ namespace Paragon.Foundation.LivePhoto.Pipelines.RenderField
         private int width;
         private string mediaSrc;
         private string movieSrc;
+        private string emptyMessage;
         private string tag;
         private string className;
 
@@ -43,31 +45,32 @@ namespace Paragon.Foundation.LivePhoto.Pipelines.RenderField
             if (item == null || innerField == null)
                 return RenderFieldResult.Empty;
             
-            livePhotoField = new LivePhotoField(innerField, innerField.Value);
-            ParseField(livePhotoField);
+            livePhotoDataField = new LivePhotoField(innerField, innerField.Value);
+            ParseField(livePhotoDataField);
             ParseNode(Parameters);
 
-            if ((string.IsNullOrEmpty(mediaSrc) || IsBroken(livePhotoField)) && site != null && site.DisplayMode == DisplayMode.Edit)
+            if ((string.IsNullOrEmpty(mediaSrc) || IsBroken(livePhotoDataField)) && site != null && site.DisplayMode == DisplayMode.Edit)
             {
                 mediaSrc = GetDefaultImage();
                 className += " scEmptyImage";
                 className = className.TrimStart(' ');
+                emptyMessage = Translate.Text("Field not Set");
             }
 
             if (string.IsNullOrEmpty(mediaSrc))
                 return RenderFieldResult.Empty;
-
+           
             var imgSource = GetPhotoSource();
             var movSource = GetMovieSource();
             var stringBuilder = new StringBuilder($"<{tag} {dataAttributes}");
             AddAttribute(stringBuilder, "data-photo-src", imgSource);
             AddAttribute(stringBuilder, "data-video-src", movSource);
-            AddAttribute(stringBuilder, "style", $"height:{height}px; width:{width}px;");
+            AddAttribute(stringBuilder, "style", $"height:{height}px; width:{width}px; background:#e4e4e4;");
 
             if (!string.IsNullOrEmpty(className))
                 AddAttribute(stringBuilder, "class", className);
 
-            stringBuilder.Append($"></{tag}>");
+            stringBuilder.Append($">{emptyMessage}</{tag}>");
             return new RenderFieldResult(stringBuilder.ToString());
         }
 
@@ -83,9 +86,9 @@ namespace Paragon.Foundation.LivePhoto.Pipelines.RenderField
             options.MaxHeight = height;
             options.MaxWidth = width;
 
-            var urlString = livePhotoField.PhotoMediaItem == null 
+            var urlString = livePhotoDataField.PhotoMediaItem == null 
                 ? new UrlString(mediaSrc) 
-                : new UrlString(MediaManager.GetMediaUrl(livePhotoField.PhotoMediaItem, options));
+                : new UrlString(MediaManager.GetMediaUrl(livePhotoDataField.PhotoMediaItem, options));
 
             return urlString.GetUrl();
         }
@@ -100,9 +103,9 @@ namespace Paragon.Foundation.LivePhoto.Pipelines.RenderField
             options.Database = database;
             options.Version = version;
 
-            var urlString = livePhotoField.MovieMediaItem == null 
+            var urlString = livePhotoDataField.MovieMediaItem == null 
                 ? new UrlString(movieSrc) 
-                : new UrlString(MediaManager.GetMediaUrl(livePhotoField.MovieMediaItem, options));
+                : new UrlString(MediaManager.GetMediaUrl(livePhotoDataField.MovieMediaItem, options));
 
             return urlString.GetUrl();
         }
@@ -110,6 +113,8 @@ namespace Paragon.Foundation.LivePhoto.Pipelines.RenderField
         protected virtual void ParseNode(SafeDictionary<string> attributes)
         {
             tag = Extract(attributes, "tag");
+            tag = string.IsNullOrWhiteSpace(tag) ? "div" : tag; 
+
             mediaSrc = Extract(attributes, "data-photo-src");
             movieSrc = Extract(attributes, "data-video-src");
             height = Extract(attributes, "height").ToInt();
